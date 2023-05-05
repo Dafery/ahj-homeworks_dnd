@@ -1,0 +1,187 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Helvetica', Arial, sans-serif;
+  box-sizing: border-box;
+  list-style-type: none;
+}
+
+*:focus-visible {
+  outline: none;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  padding: 15px;
+  background-color: #4d27a7c0;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.dashboard-col {
+  width: 250px;
+  height: min-content;
+  padding: 15px 10px;
+  background-color: #f1f1f1fa;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px #cecece;
+}
+
+.dashboard-col__title {
+  position: relative;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1rem;
+  color: #554a63;
+  text-transform: uppercase;
+}
+
+.dashboard-col__title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 80%;
+  height: 1px;
+  background-color: #645b7077;
+}
+
+.dashboard-col__list {
+  min-height: 50px;
+  padding: 20px 0 15px;
+  font-size: 0.9rem;
+}
+
+.dashboard-col__list-item {
+  position: relative;
+  padding-bottom: 5px;
+  padding-top: 5px;
+}
+
+.dashboard-col__list-item::before {
+  content: attr(data-value);
+  display: block;
+  padding: 10px;
+  line-height: 1.2rem;
+  color: #363636;
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px #cecece;
+}
+
+.dashboard-col__list-item:hover::before {
+  box-shadow: 0 2px 5px #9c91b9;
+}
+
+.dashboard-col__list-item:hover .dashboard-col__list-item__btn-delete {
+  display: block;
+}
+
+.dashboard-col__list-item__btn-delete {
+  display: none;
+  position: absolute;
+  top: 0px;
+  right: 5px;
+  width: 16px;
+  height: 16px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #b8add4;
+  border: none;
+  border-radius: 2px;
+  box-shadow: 0 0 2px #9c91b9;
+}
+
+.dashboard-col__list-item__btn-delete:hover {
+  cursor: pointer;
+  background-color: #e43c3c;
+}
+
+.dashboard-col__btn-add-another-card {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #645b70cb;
+  border: none;
+  background: none;
+}
+
+.dashboard-col__btn-add-another-card:hover {
+  cursor: pointer;
+  color: #2e2e2e;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dashboard-col__textarea {
+  width: 100%;
+  height: 70px;
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 0.9rem;
+  border: none;
+  resize: none;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px #cecece;
+}
+
+.dashboard-col__textarea:hover {
+  cursor: auto;
+}
+
+.dashboard-col__textarea::placeholder {
+  opacity: 0.5;
+}
+
+.dashboard-col__btn-add-card {
+  padding: 10px 15px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  background-color: #40ac46;
+  border: none;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px #cecece;
+}
+
+.dashboard-col__btn-add-card:hover {
+  cursor: pointer;
+  color: #ffffffe5;
+  background-color: #3c9140;
+}
+
+.dashboard-col__btn-close {
+  margin: 0 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1rem;
+  color: #afafaf;
+  border: none;
+  vertical-align: middle;
+}
+
+.dashboard-col__btn-close:hover {
+  cursor: pointer;
+  color: #e43c3c;
+}
+
+.dashboard-col__list-item.dragged {
+  position: absolute;
+  cursor: grabbing;
+  pointer-events: none;
+  transform: rotate(5deg);
+  z-index: 999;
+}
+
+.dashboard-col__list-item.shaded {
+  opacity: 0.5;
+}

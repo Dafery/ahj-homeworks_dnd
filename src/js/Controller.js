@@ -1,65 +1,42 @@
+import Card from './Card';
+import Column from './Column';
 import Store from './Store';
 
-import { createElementFromHTML } from './utils';
+import { dashboardTitles } from './consts';
 
-export default class Dashboard {
+export default class Controller {
   constructor(container) {
     this.container = container;
     this.store = new Store(JSON.parse(localStorage.getItem('state')));
   }
 
-  static getDashboardColHTML(id, title) {
-    return `<section class="dashboard-col">
-              <h2 class="dashboard-col__title">${title}</h2>
-              <ul class="dashboard-col__list" id="${id}"></ul>
-              <button class="dashboard-col__btn-add-another-card">+ Add another card</button>
-              <textarea class="dashboard-col__textarea" placeholder="Enter a title for this card..." hidden></textarea>
-              <button class="dashboard-col__btn-add-card" hidden>Add card</button>
-              <button class="dashboard-col__btn-close" hidden>✕</button>
-            </section>`;
-  }
-
-  static getDashboardColListItem(key, text) {
-    return createElementFromHTML(
-      `<li class="dashboard-col__list-item" key="${key}" data-value="${text}">
-        <button class="dashboard-col__list-item__btn-delete">✕</button>
-      </li>`
-    );
-  }
-
   init = () => {
-    const dashboardTitles = {
-      todo: 'Todo',
-      inProgress: 'In progress',
-      done: 'Done',
-    };
-
     for (const id in dashboardTitles) {
-      this.container.insertAdjacentHTML('beforeend', Dashboard.getDashboardColHTML(id, dashboardTitles[id]));
-      const dashboardColList = this.container.querySelector(`#${id}`);
+      const column = new Column(id);
+      const dashboardCol = column.getDashboardCol();
+      this.container.append(dashboardCol);
+
+      const dashboardColList = Column.getColListByEl(dashboardCol);
 
       this.store.state[id].forEach((item) => {
-        const addedItem = Dashboard.getDashboardColListItem(item.key, item.text);
+        const card = new Card(item.key, item.text);
+        const addedItem = card.getDashboardColListItem();
         addedItem.addEventListener('mousedown', this.onMouseDown);
 
-        const deleteItemBtn = addedItem.querySelector('button');
-        deleteItemBtn.addEventListener('click', (e) => {
-          const colList = e.target.closest('ul');
-          this.store.deleteItem(colList.id, item.key);
-          addedItem.remove();
-        });
+        const deleteItemBtn = Card.getDeleteItemBtnByEl(addedItem);
+        deleteItemBtn.addEventListener('click', this.onDeleteItem);
 
         dashboardColList.append(addedItem);
       });
     }
 
-    const dashboardCols = this.container.querySelectorAll('.dashboard-col');
+    const dashboardCols = Column.getColsByEl(this.container);
     dashboardCols.forEach((col) => {
-      const dashboardColList = col.querySelector('.dashboard-col__list');
-      const dashboardColBtnAddAnotherCard = col.querySelector('.dashboard-col__btn-add-another-card');
-      const dashboardColTextarea = col.querySelector('.dashboard-col__textarea');
-      const dashboardColBtnAddCard = col.querySelector('.dashboard-col__btn-add-card');
-      const dashboardColBtnClose = col.querySelector('.dashboard-col__btn-close');
+      const dashboardColList = Column.getColListByEl(col);
+      const dashboardColBtnAddAnotherCard = Column.getColBtnAnotherCardByEl(col);
+      const dashboardColTextarea = Column.getColTextareaByEl(col);
+      const dashboardColBtnAddCard = Column.getColBtnAddCardByEl(col);
+      const dashboardColBtnClose = Column.getColBtnCloseByEl(col);
 
       dashboardColBtnAddAnotherCard.addEventListener('click', () => {
         dashboardColBtnAddAnotherCard.hidden = true;
@@ -82,15 +59,12 @@ export default class Dashboard {
         dashboardColBtnAddCard.hidden = true;
         dashboardColBtnClose.hidden = true;
 
-        const addedItem = Dashboard.getDashboardColListItem(itemKey, dashboardColTextarea.value);
+        const card = new Card(itemKey, dashboardColTextarea.value);
+        const addedItem = card.getDashboardColListItem();
         addedItem.addEventListener('mousedown', this.onMouseDown);
 
-        const deleteItemBtn = addedItem.querySelector('button');
-        deleteItemBtn.addEventListener('click', (e) => {
-          const colList = e.target.closest('ul');
-          this.store.deleteItem(colList.id, itemKey);
-          addedItem.remove();
-        });
+        const deleteItemBtn = Card.getDeleteItemBtnByEl(addedItem);
+        deleteItemBtn.addEventListener('click', this.onDeleteItem);
 
         dashboardColList.append(addedItem);
       });
@@ -102,6 +76,13 @@ export default class Dashboard {
         dashboardColBtnClose.hidden = true;
       });
     });
+  };
+
+  onDeleteItem = (e) => {
+    const colList = e.target.closest('ul');
+    const colListItem = e.target.closest('li');
+    this.store.deleteItem(colList.id, colListItem.getAttribute('key'));
+    colListItem.remove();
   };
 
   onMouseMove = (e) => {
@@ -118,7 +99,7 @@ export default class Dashboard {
     }
 
     const closestList = e.target.closest('ul');
-    this.listItems = closestList ? [...closestList.querySelectorAll('li:not(.dragged)')] : undefined;
+    this.listItems = closestList ? Card.getListItemsByEl(closestList) : undefined;
 
     if (e.target.tagName === 'UL') {
       return e.layerY < e.target.offsetHeight / 2

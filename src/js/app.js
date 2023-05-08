@@ -1,6 +1,6 @@
-import Dashboard from './Dashboard';
+import Controller from './Controller';
 
 const container = document.querySelector('.container');
-const dashboard = new Dashboard(container);
+const controller = new Controller(container);
 
-dashboard.init();
+controller.init();
